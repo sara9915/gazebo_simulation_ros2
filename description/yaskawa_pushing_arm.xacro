@@ -83,13 +83,13 @@
 
         <joint name="Rigido5" type="fixed">
             <origin xyz="-0.040873 -0.039895 0.057583" rpy="0 0 0"/>
-            <parent link="Base_Jaw_3"/>
+            <parent link="Base_Jaw_2"/>
             <child link="ext_finger_1"/>
         </joint>
 
         <joint name="Rigido4" type="fixed">
             <origin xyz="-0.138753 -0.040549 0.03692" rpy="0 0 ${-0*deg}"/>
-            <parent link="Base_Jaw_4"/>
+            <parent link="Base_Jaw_1"/>
             <child link="ext_finger_3"/>
         </joint>
 
