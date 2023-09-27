@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="motoman_sia5f">
+
+  <xacro:property name="deg" value="0.017453293" /> 
+
+  <!-- <xacro:include filename="$(find yaskawa_description)/robots/sia5f_gazebo.xacro" /> 
+  <xacro:sia5f_arm/>-->
+  
+  <xacro:include filename="$(find gazebo_simulation)/description/yaskawa_pushing_arm.xacro" />
+  <xacro:manipulator/>
+
+
+
+  <xacro:include filename="$(find gazebo_simulation)/description/manipulator.gazebo.xacro" />
+  <xacro:include filename="$(find gazebo_simulation)/description/manipulator.control.xacro" />
+</robot>

@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wgs32_camera">
+
+    <xacro:macro name="manipulator">
+        <xacro:property name="deg" value="0.017453293" /> <!--degrees to radians-->
+
+        <xacro:include filename="$(find yaskawa_description)/robots/sia5f_arm.urdf"/>
+
+        <xacro:include filename="$(find wsg32_description)/grippers/wsg32.urdf"/>
+        <xacro:wsg32_link base_link='base_link_gripper' xyz="-0.035 0.030 -0.026" rpy="${-90*deg} 0 ${-90*deg}" materials_="0"/>
+        
+        <xacro:include filename="$(find fingers_description)/fingers/sun_tactile.urdf"/>
+        <xacro:tactile_link base_link_1='ext_finger_1' xyz_1="0.016703 -0.035481 -0.000855" rpy_1="0 0 0" base_link_2='ext_finger_3' xyz_2="-0.016415 -0.035555 0.000618" rpy_2="0 0 0"/>
+
+        <joint name="tool0_joint_base_gripper" type="fixed">
+            <origin xyz="-0.035 0.030 -0.026" rpy="${-90*deg} 0 ${-90*deg}"/>
+            <parent link="tool0"/>
+            <child link="base_link_gripper"/>
+        </joint>
+
+        <link name="base_link_gripper">
+            <inertial>
+                <origin xyz="0.03129440494284765 -0.0236275456406487 0.0633242924961397" rpy="0 0 0"/>
+                <mass value="0.49962194311335323"/>
+                <inertia ixx="0.001045" iyy="0.001292" izz="0.000438" ixy="6.1e-05" iyz="-0.000254" ixz="0.000195"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="white1"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="ext_finger_1">
+            <inertial>
+                <origin xyz="0.005297128503583257 -0.015412565841978962 -0.010725009096658585" rpy="0 0 0"/>
+                <mass value="0.17786635698192355"/>
+                <inertia ixx="4.9e-05" iyy="3.1e-05" izz="3.9e-05" ixy="8e-06" iyz="-0.0" ixz="-0.0"/>
+            </inertial>
+            <visual>
+                <origin xyz="-0.073096 0.106795 -0.04492" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/finger_ext_1.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="white1"/>
+            </visual>
+            <collision>
+                <origin xyz="-0.073096 0.106795 -0.04492" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/finger_ext_1.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="ext_finger_3">
+            <inertial>
+                <origin xyz="-0.005550196974422999 -0.015531770123516614 -0.010351884823019339" rpy="0 0 0"/>
+                <mass value="0.17786635698192355"/>
+                <inertia ixx="4.9e-05" iyy="3.1e-05" izz="3.9e-05" ixy="-8e-06" iyz="0.0" ixz="-0.0"/>
+            </inertial>
+            <visual>
+                <origin xyz="0.013389 0.107102 -0.046481" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/finger_ext_2.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="white1"/>
+            </visual>
+            <collision>
+                <origin xyz="0.013389 0.107102 -0.046481" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="file://$(find gripper_description)/meshes/finger_ext_2.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="Rigido5" type="fixed">
+            <origin xyz="-0.040873 -0.039895 0.057583" rpy="0 0 0"/>
+            <parent link="Base_Jaw_3"/>
+            <child link="ext_finger_1"/>
+        </joint>
+
+        <joint name="Rigido4" type="fixed">
+            <origin xyz="-0.138753 -0.040549 0.03692" rpy="0 0 ${-0*deg}"/>
+            <parent link="Base_Jaw_4"/>
+            <child link="ext_finger_3"/>
+        </joint>
+
+    </xacro:macro>
+</robot>
