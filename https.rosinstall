@@ -1,0 +1,19 @@
+- git:
+    local-name: ros2_wsg32_description
+    uri: https://github.com/sara9915/ros2_wsg32_description.git
+    version: main
+
+- git:
+    local-name: ros2_yaskawa_description
+    uri: https://github.com/sara9915/ros2_yaskawa_description.git
+    version: main
+
+- git:
+    local-name: ros2_gripper_description
+    uri: https://github.com/sara9915/ros2_gripper_description.git
+    version: main
+
+- git:
+    local-name: ros2_sun_fingers_description
+    uri: https://github.com/sara9915/ros2_sun_fingers_description.git
+    version: main
