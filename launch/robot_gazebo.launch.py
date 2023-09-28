@@ -2,31 +2,38 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import SetEnvironmentVariable
-from launch.actions import TimerAction
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration
+from launch.conditions import IfCondition
 import xacro
 
 
 def generate_launch_description():
 
-    # extracting the robot deffinition from the xacro file
-    xacro_file = os.path.join(get_package_share_directory('gazebo_simulation'), 'description','manipulator.urdf.xacro')
-    robot_description_content = xacro.process_file(xacro_file).toxml()
+    xacro_file_default = os.path.join(get_package_share_directory('gazebo_simulation'), 'description','manipulator.urdf.xacro')
+
+    gazebo_ = LaunchConfiguration('gazebo_')
+
+    gazebo_launch_arg = DeclareLaunchArgument(
+        name='gazebo_',
+        default_value= "true",
+        description='Set to true if you want to simulate on gazebo, false otherwise.'
+    )
+
+    robot_description = Command(
+        [FindExecutable(name='xacro'), ' ', xacro_file_default])
 
     rviz_absolute_path = os.path.join(get_package_share_directory('gazebo_simulation'),'rviz','visualize.rviz')
 
-    xacro_robot = os.path.join(get_package_share_directory('yaskawa_description'), 'robots','sia5f_arm.xacro')
-
-    yaml_file = os.path.join(get_package_share_directory('gazebo_simulation'),'config','controllers.yaml')
 
     # robot state publisher node
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': robot_description_content}]
+        parameters=[{'robot_description': robot_description}]
     )
 
     node_joint_state_publisher = Node(
@@ -46,6 +53,7 @@ def generate_launch_description():
     # Gazebo launch file
     launch_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
+        condition=IfCondition(gazebo_)
         #launch_arguments={'world': world_path}.items()
     )
 
@@ -73,7 +81,7 @@ def generate_launch_description():
 
     # Run the nodes
     return LaunchDescription([
-        #SetEnvironmentVariable(name='GAZEBO_MODEL_PATH', value=model_path),
+        gazebo_launch_arg,
         node_robot_state_publisher,
         node_joint_state_publisher,
         launch_gazebo,

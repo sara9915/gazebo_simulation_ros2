@@ -6,7 +6,7 @@
   <!-- <xacro:include filename="$(find yaskawa_description)/robots/sia5f_gazebo.xacro" /> 
   <xacro:sia5f_arm/>-->
   
-  <xacro:include filename="$(find gazebo_simulation)/description/yaskawa_pushing_arm.xacro" />
+  <xacro:include filename="$(find gazebo_simulation)/description/yaskawa_wsg.xacro" />
   <xacro:manipulator/>
 
 
