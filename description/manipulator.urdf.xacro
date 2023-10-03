@@ -2,19 +2,16 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="motoman_sia5f">
 
   <xacro:property name="deg" value="0.017453293" /> 
-
-  <!-- <xacro:include filename="$(find yaskawa_description)/robots/sia5f_gazebo.xacro" /> 
-  <xacro:sia5f_arm/>-->
   
   <xacro:include filename="$(find gazebo_simulation)/description/yaskawa_pushing.xacro" />
   <xacro:manipulator/>
 
   <xacro:include filename="$(find gazebo_simulation)/description/manipulator.control.xacro" />
 
-  <xacro:include filename="$(find gazebo_simulation)/description/manipulator.gazebo.xacro" />
+  <xacro:include filename="$(find gazebo_simulation)/description/manipulator.gazebo.xacro" /> 
 
   <xacro:include filename="$(find gazebo_simulation)/description/camera.gazebo.xacro" />
   <xacro:gazebo_d435 camera_name="camera_bottom" reference_link="camera_bottom_link" topics_ns="camera_bottom" depth_optical_frame="camera_bottom_depth_optical_frame" color_optical_frame="camera_bottom_color_optical_frame" infrared1_optical_frame="camera_bottom_infra1_optical_frame" infrared2_optical_frame="camera_bottom_infra2_optical_frame"></xacro:gazebo_d435>
-  <xacro:gazebo_d435 camera_name="camera_upper" reference_link="camera_upper_link" topics_ns="camera_upper" depth_optical_frame="camera_upper_depth_optical_frame" color_optical_frame="camera_upper_color_optical_frame" infrared1_optical_frame="camera_upper_infra1_optical_frame" infrared2_optical_frame="camera_upper_infra2_optical_frame"></xacro:gazebo_d435>
+  <xacro:gazebo_d435 camera_name="camera_upper" reference_link="camera_upper_link" topics_ns="camera_upper" depth_optical_frame="camera_upper_depth_optical_frame" color_optical_frame="camera_upper_color_optical_frame" infrared1_optical_frame="camera_upper_infra1_optical_frame" infrared2_optical_frame="camera_upper_infra2_optical_frame"></xacro:gazebo_d435> 
 
 </robot>
