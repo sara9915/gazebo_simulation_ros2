@@ -12,7 +12,7 @@ import xacro
 
 def generate_launch_description():
 
-    xacro_file_default = os.path.join(get_package_share_directory('gazebo_simulation'), 'description','manipulator.urdf.xacro')
+    xacro_file_default = os.path.join(get_package_share_directory('gazebo_simulation'), 'description','manipulator_all.urdf.xacro')
 
     gazebo_ = LaunchConfiguration('gazebo_')
 
