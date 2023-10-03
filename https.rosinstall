@@ -20,5 +20,5 @@
 
 - git:
     local-name: realsense-ros
-    uri: https://github.com/IntelRealSense/realsense-ros.git
+    uri: https://github.com/IntelRealSense/realsense-ros/tree/ros2-development/realsense2_description
     version: ros2-development
