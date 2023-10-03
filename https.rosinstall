@@ -18,7 +18,3 @@
     uri: https://github.com/sara9915/ros2_sun_fingers_description.git
     version: main
 
-- git:
-    local-name: realsense2_description
-    uri: https://github.com/IntelRealSense/realsense-ros/tree/ros2-development/realsense2_description
-    version: ros2-development
