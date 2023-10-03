@@ -22,6 +22,14 @@ def generate_launch_description():
         description='Set to true if you want to simulate on gazebo, false otherwise.'
     )
 
+    rviz_ = LaunchConfiguration("rviz_")
+
+    rviz_launch_arg = DeclareLaunchArgument(
+        name='rviz_',
+        default_value= "true",
+        description='Set to true if you want to visualize on rviz, false otherwise.'
+    )
+
     robot_description = Command(
         [FindExecutable(name='xacro'), ' ', xacro_file_default])
 
@@ -47,13 +55,15 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', rviz_absolute_path]
+        arguments=['-d', rviz_absolute_path],
+        condition=IfCondition(rviz_)
     )
 
     # Gazebo launch file
     launch_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-        condition=IfCondition(gazebo_)
+        condition=IfCondition(gazebo_),
+        launch_arguments={'pause': 'true'}.items()
         #launch_arguments={'world': world_path}.items()
     )
 
@@ -82,6 +92,7 @@ def generate_launch_description():
     # Run the nodes
     return LaunchDescription([
         gazebo_launch_arg,
+        rviz_launch_arg,
         node_robot_state_publisher,
         node_joint_state_publisher,
         launch_gazebo,

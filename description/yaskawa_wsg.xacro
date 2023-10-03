@@ -7,7 +7,7 @@
         <xacro:include filename="$(find yaskawa_description)/robots/sia5f_arm.urdf"/>
 
         <xacro:include filename="$(find wsg32_description)/grippers/wsg32.urdf"/>
-        <xacro:wsg32_link base_link='base_link_gripper' xyz="-0.0002 -0.0076 -0.0007" rpy="0 3.14 -1.57" materials_="1"/>
+        <xacro:wsg32_link base_link='base_link_gripper' materials_="1"/>
         
         <joint name="tool0_joint_base_gripper" type="fixed">
             <origin xyz="0 0 0" rpy="${-90*deg} 0 ${-90*deg}"/>
