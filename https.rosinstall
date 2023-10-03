@@ -18,7 +18,7 @@
     uri: https://github.com/sara9915/ros2_sun_fingers_description.git
     version: main
 
--git:
+- git:
     local-name: realsense_gazebo_plugin
     uri: https://github.com/pal-robotics/realsense_gazebo_plugin.git
     version: foxy-devel
