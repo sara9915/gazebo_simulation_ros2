@@ -5,7 +5,7 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
 1. **Add the repository to your ROS2 workspace**
     ```
     $ cd ~/my_ros2_ws/src
-    $ git clone https://github.com/sara9915/ros2_gazebo_simulation.git
+    $ git clone https://github.com/sara9915/gazebo_simulation_ros2.git
     ```
 
 2. **Install ROS dependencies**
