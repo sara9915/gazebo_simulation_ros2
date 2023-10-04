@@ -3,7 +3,7 @@
 
   <xacro:property name="deg" value="0.017453293" /> 
   
-  <xacro:include filename="$(find gazebo_simulation)/description/yaskawa_pushing.xacro" />
+  <xacro:include filename="$(find gazebo_simulation_ros2)/description/yaskawa_pushing.xacro" />
   <xacro:manipulator/>
   
 </robot>

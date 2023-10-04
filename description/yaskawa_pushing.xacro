@@ -5,8 +5,8 @@
         <xacro:property name="deg" value="0.017453293" />
         <!--degrees to radians-->
 
-        <xacro:include filename="$(find yaskawa_description)/robots/sia5f_arm.urdf"/>
-        <xacro:include filename="$(find gripper_description)/grippers/gripper_pushing.xacro"/>
+        <xacro:include filename="$(find yaskawa_description_ros2)/robots/sia5f_arm.urdf"/>
+        <xacro:include filename="$(find gripper_description_ros2)/grippers/gripper_pushing.xacro"/>
 
         <joint name="tool0_joint_base_gripper" type="fixed">
             <origin xyz="0 0 0" rpy="${-90*deg} 0 ${-90*deg}"/>

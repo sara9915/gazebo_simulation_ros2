@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="motoman_sia5f">
     
-    <xacro:include filename="$(find yaskawa_description)/robots/sia5f.control.xacro"/>
+    <xacro:include filename="$(find yaskawa_description_ros2)/robots/sia5f.control.xacro"/>
 
 
 </robot>
