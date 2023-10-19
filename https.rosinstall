@@ -14,8 +14,8 @@
     version: main
 
 - git:
-    local-name: ros2_sun_fingers_description
-    uri: https://github.com/sara9915/sun_fingers_description_ros2.git
+    local-name: uclv_fingers_description_ros2
+    uri: https://github.com/sara9915/uclv_fingers_description_ros2.git
     version: main
 
 - git:
