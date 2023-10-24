@@ -9,8 +9,11 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
     ```
 
 2. **Install ROS dependencies**
+
+   For ROS2 Humble (otherwise, change the version using ${ROS_DISTRO})
     ```
-    $ sudo apt install ros-${ROS_DISTRO}-joint-state-publisher ros-${ROS_DISTRO}-joint-state-publisher-gui gazebo-ros2-control ros2_controllers ros2_control
+    sudo apt install ros-humble-joint-state-publisher ros-humble-joint-state-publisher-gui
+    sudo apt-get install ros-humble-ros2-control ros-humble-ros2-controllers ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros2-control
     
     ```
     The packages listed in `https.rosinstall` have to be installed. You can use `wstool` as follows:
@@ -21,7 +24,7 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
     wstool update
     ```
 
-3. **Build**
+4. **Build**
     ```
     $ cd ~/my_ros2_ws
     $ colcon build --symlink-install
