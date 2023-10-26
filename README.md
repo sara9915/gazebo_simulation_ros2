@@ -23,6 +23,11 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
     wstool merge https://raw.githubusercontent.com/sara9915/ros2_gazebo_simulation/main/https.rosinstall
     wstool update
     ```
+   
+    If you prefer to clone via ssh, merge with
+    ```bash
+    wstool merge https://raw.githubusercontent.com/sara9915/ros2_gazebo_simulation/main/ssh.rosinstall
+    ```
 
 4. **Build**
     ```
