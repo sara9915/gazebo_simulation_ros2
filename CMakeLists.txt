@@ -22,6 +22,10 @@ find_package(controller_manager REQUIRED)
 find_package(gazebo_ros2_control REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros2_controllers REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
+add_executable(yaskawa_wsg_pub src/yaskawa_wsg_pub.cpp)
+ament_target_dependencies(yaskawa_wsg_pub rclcpp sensor_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -39,5 +43,9 @@ install(DIRECTORY
   launch config description rviz
   DESTINATION share/${PROJECT_NAME}/
 )
+
+install(TARGETS
+  yaskawa_wsg_pub
+  DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
