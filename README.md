@@ -5,7 +5,7 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
 1. **Add the repository to your ROS2 workspace**
     ```
     $ cd ~/my_ros2_ws/src
-    $ git clone https://github.com/sara9915/gazebo_simulation_ros2.git
+    $ git clone https://github.com/sara9915/uclv_yaskawa_simulation.git
     ```
 
 2. **Install ROS dependencies**
@@ -20,13 +20,13 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
    ```bash
     # In the src of your ros2 ws
     wstool init #if not already initialized
-    wstool merge https://raw.githubusercontent.com/sara9915/ros2_gazebo_simulation/main/https.rosinstall
+    wstool merge https://raw.githubusercontent.com/sara9915/uclv_yaskawa_simulation/main/https.rosinstall
     wstool update
     ```
    
     If you prefer to clone via ssh, merge with
     ```bash
-    wstool merge https://raw.githubusercontent.com/sara9915/ros2_gazebo_simulation/main/ssh.rosinstall
+    wstool merge https://raw.githubusercontent.com/sara9915/uclv_yaskawa_simulation/main/ssh.rosinstall
     ```
 
 4. **Build**

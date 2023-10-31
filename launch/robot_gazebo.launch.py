@@ -12,7 +12,7 @@ import xacro
 
 def generate_launch_description():
 
-    xacro_file_default = os.path.join(get_package_share_directory('gazebo_simulation_ros2'), 'description','manipulator_all.urdf.xacro')
+    xacro_file_default = os.path.join(get_package_share_directory('uclv_yaskawa_simulation'), 'description','manipulator_all.urdf.xacro')
 
     gazebo_ = LaunchConfiguration('gazebo_')
 
@@ -33,7 +33,7 @@ def generate_launch_description():
     robot_description = Command(
         [FindExecutable(name='xacro'), ' ', xacro_file_default])
 
-    rviz_absolute_path = os.path.join(get_package_share_directory('gazebo_simulation_ros2'),'rviz','visualize.rviz')
+    rviz_absolute_path = os.path.join(get_package_share_directory('uclv_yaskawa_simulation'),'rviz','visualize.rviz')
 
 
     # robot state publisher node
