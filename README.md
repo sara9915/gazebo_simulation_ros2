@@ -1,4 +1,6 @@
 # Motoman Yaskawa Gazebo Simulation with ROS2 
+This is a ROS2 package to visualize and simulate the Yaskawa SIA5F robot, equipped with a WSG-32 gripper with tactile extensions and a Realsense D435i camera. Both simulation on Gazebo and visualization on Rviz are available. 
+
 ## Installing
 Follow the steps below to set up the package. The suggested ROS2 version is ros-humble on Ubuntu 22.04.
 
