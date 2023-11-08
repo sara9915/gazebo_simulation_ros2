@@ -1,71 +1,70 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include <chrono>
 
+using namespace std::chrono_literals;
 class YaskawaWsgPub : public rclcpp::Node
 {
 public:
     YaskawaWsgPub() : Node("yaskawa_wsg_pub")
     {
         // Create publisher
-        joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
+        full_joints_pub = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
+        timer_ = this->create_wall_timer(500ms, std::bind(&YaskawaWsgPub::timer_callback, this));
+
+        this->gripper_joint = std::make_shared<sensor_msgs::msg::JointState>();
+        this->full_joints = std::make_shared<sensor_msgs::msg::JointState>();
 
         // Create subscribers
         motoman_joint_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
             "/motoman/joint_states", 10, std::bind(&YaskawaWsgPub::motomanJointCallback, this, std::placeholders::_1));
         gripper_joint_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(
-            "/joint_states", 10, std::bind(&YaskawaWsgPub::gripperJointCallback, this, std::placeholders::_1));
+            "/wsg/joint_states", 10, std::bind(&YaskawaWsgPub::gripperJointCallback, this, std::placeholders::_1));
     }
 
 private:
+    void timer_callback()
+    {
+        full_joints->name.back() = this->gripper_joint->name.at(0);
+        full_joints->position.back() = this->gripper_joint->position.at(0);
+        full_joints->header.stamp = this->get_clock()->now(); // ros::Time::now();
+        // std::cout << "Complete message:" << std::endl;
+        // RCLCPP_INFO_STREAM(this->get_logger(), sensor_msgs::msg::to_yaml(*full_joints));
+        full_joints_pub->publish(*this->full_joints);
+    }
+
     void motomanJointCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
-        // Extract joint values from received message
-        // std::vector<double> motoman_joint_values;
-        // for (size_t i = 0; i < msg->name.size(); ++i)
-        // {
-        //     if (msg->name[i].find("gripper_joint") == std::string::npos)
-        //     {
-        //         motoman_joint_values.push_back(msg->position[i]);
-        //     }
-        // }
+        full_joints->name.resize(msg->name.size() + 1);
+        full_joints->position.resize(msg->position.size() + 1);
 
-        // // Update joint state message
-        // joint_state_msg_.position = motoman_joint_values;
-        // joint_state_msg_.header.stamp = this->now();
-
-        // Publish joint state message
-        joint_state_pub_->publish(*msg);
+        for (size_t i = 0; i < msg->position.size(); i++)
+        {
+            full_joints->name.at(i) = msg->name.at(i);
+            full_joints->position.at(i) = msg->position.at(i);
+        }
     }
 
     void gripperJointCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
-        double gripper_joint_value = msg->position[0]/2 - 0.034;
-        // Extract gripper joint value from received message
-        // double gripper_joint_value = 0.0;
-        // for (size_t i = 0; i < msg->name.size(); ++i)
-        // {
-        //     if (msg->name[i] == "gripper_joint")
-        //     {
-        //         gripper_joint_value = msg->position[i];
-        //         break;
-        //     }
-        // }
+        double gripper_joint_value_ = msg->position.at(0) / 2 - 0.034;
 
-        // // Update joint state message
-        joint_state_msg_.position.push_back(gripper_joint_value);
-        joint_state_msg_.header.stamp = this->now();
+        this->gripper_joint->name.resize(1);
+        this->gripper_joint->position.resize(1);
 
-        // Publish joint state message
-        joint_state_pub_->publish(joint_state_msg_);
+        this->gripper_joint->name.at(0) = msg->name.at(0);
+        this->gripper_joint->position.at(0) = gripper_joint_value_;
     }
 
-    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr full_joints_pub;
+    rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr motoman_joint_sub_;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr gripper_joint_sub_;
-    sensor_msgs::msg::JointState joint_state_msg_;
+    sensor_msgs::msg::JointState::SharedPtr gripper_joint;
+    sensor_msgs::msg::JointState::SharedPtr full_joints;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<YaskawaWsgPub>());
