@@ -16,6 +16,12 @@
   <depend>gazebo-ros2-control</depend>
   <depend>controller_manager</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>uclv_moveit_planner_ros2</depend>
+  <depend>uclv_utilities</depend>
+  <depend>tf2_ros</depend>
+  <depend>moveit_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

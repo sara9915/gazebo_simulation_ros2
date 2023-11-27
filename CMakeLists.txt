@@ -23,9 +23,19 @@ find_package(gazebo_ros2_control REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros2_controllers REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(uclv_moveit_planner_ros2 REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(uclv_utilities REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_msgs REQUIRED)
 
 add_executable(yaskawa_wsg_pub src/yaskawa_wsg_pub.cpp)
 ament_target_dependencies(yaskawa_wsg_pub rclcpp sensor_msgs)
+
+add_executable(twist_ref_pub src/twist_ref_pub.cpp)
+ament_target_dependencies(twist_ref_pub rclcpp sensor_msgs geometry_msgs uclv_moveit_planner_ros2 std_msgs uclv_utilities tf2_ros moveit_ros_planning_interface moveit_msgs) 
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -46,6 +56,7 @@ install(DIRECTORY
 
 install(TARGETS
   yaskawa_wsg_pub
+  twist_ref_pub
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
