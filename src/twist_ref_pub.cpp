@@ -42,7 +42,7 @@ public:
                   twist_ref_pub = this->create_publisher<geometry_msgs::msg::TwistStamped>("/twist_ref", 1);
 
                   // Initialize subscriber to read the twist command from the controller
-                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::Twist>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
+                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
                   
                   // Initialize timer to publish the reference joint states and the reference twist to be actuated
                   timer_ = this->create_wall_timer(
@@ -53,9 +53,9 @@ public:
 
 private:
   // Callbacks
-  void update_vel(const geometry_msgs::msg::Twist &msg)
+  void update_vel(const geometry_msgs::msg::TwistStamped &msg)
   {
-    this->vipi << msg.linear.x, msg.linear.y, msg.linear.z, msg.angular.x, msg.angular.y, msg.angular.z; // desired pusher velocity in world frame
+    this->vipi << msg.twist.linear.x, msg.twist.linear.y, msg.twist.linear.z, msg.twist.angular.x, msg.twist.angular.y, msg.twist.angular.z; // desired pusher velocity in world frame
   }
 
   void timer_callback()
@@ -123,7 +123,7 @@ private:
   // Publisher and subscriber
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joints_ref_pub;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_pub;
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_ref_sub;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_sub;
   rclcpp::TimerBase::SharedPtr timer_;
 
   // MoveIt variables (used to calculate Jacobian)

@@ -10,7 +10,7 @@ public:
     {
         // Create publisher
         full_joints_pub = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
-        timer_ = this->create_wall_timer(500ms, std::bind(&YaskawaWsgPub::timer_callback, this));
+        timer_ = this->create_wall_timer(25ms, std::bind(&YaskawaWsgPub::timer_callback, this));
 
         this->gripper_joint = std::make_shared<sensor_msgs::msg::JointState>();
         this->full_joints = std::make_shared<sensor_msgs::msg::JointState>();
@@ -25,6 +25,10 @@ public:
 private:
     void timer_callback()
     {
+        if(!this->joints_read || !this->gripper_read)
+        {
+            return;
+        }
         full_joints->name.back() = this->gripper_joint->name.at(0);
         full_joints->position.back() = this->gripper_joint->position.at(0);
         full_joints->header.stamp = this->get_clock()->now(); // ros::Time::now();
@@ -35,6 +39,7 @@ private:
 
     void motomanJointCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
+        this->joints_read = true;
         full_joints->name.resize(msg->name.size() + 1);
         full_joints->position.resize(msg->position.size() + 1);
 
@@ -47,6 +52,7 @@ private:
 
     void gripperJointCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
+        this->gripper_read = true;
         double gripper_joint_value_ = msg->position.at(0) / 2 - 0.034;
 
         this->gripper_joint->name.resize(1);
@@ -62,6 +68,8 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr gripper_joint_sub_;
     sensor_msgs::msg::JointState::SharedPtr gripper_joint;
     sensor_msgs::msg::JointState::SharedPtr full_joints;
+    bool gripper_read = false;
+    bool joints_read = false;
 };
 
 int main(int argc, char **argv)

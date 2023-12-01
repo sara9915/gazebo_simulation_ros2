@@ -21,6 +21,7 @@
   <depend>uclv_moveit_planner_ros2</depend>
   <depend>uclv_utilities</depend>
   <depend>tf2_ros</depend>
+  <depend>tf2</depend>
   <depend>moveit_msgs</depend>
 
   <export>
