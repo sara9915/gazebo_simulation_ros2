@@ -67,7 +67,7 @@ public:
                   twist_ref_pub = this->create_publisher<geometry_msgs::msg::TwistStamped>("/twist_ref", 1);
 
                   // Initialize subscriber to read the twist command from the controller
-                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::Twist>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
+                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
                   
                   // Initialize timer to publish the reference joint states and the reference twist to be actuated
                   timer_ = this->create_wall_timer(
@@ -77,9 +77,9 @@ public:
 
 private:
   // Callbacks
-  void update_vel(const geometry_msgs::msg::Twist &msg)
+  void update_vel(const geometry_msgs::msg::TwistStamped &msg)
   {
-    this->vipi << msg.linear.x, msg.linear.y, msg.linear.z, msg.angular.x, msg.angular.y, msg.angular.z; // desired pusher velocity in world frame
+    this->vipi << msg.twist.linear.x, msg.twist.linear.y, msg.twist.linear.z, msg.twist.angular.x, msg.twist.angular.y, msg.twist.angular.z; // desired pusher velocity in world frame
   }
 
   void timer_callback()
@@ -96,7 +96,7 @@ private:
     twist_ref_msg.twist.angular.z = this->vipi(5);
 
     // Publishing the reference twist to be actuated
-    std::cout << BOLDGREEN << "Publishing the reference twist to be actuated: " << RESET << std::endl;
+    // std::cout << BOLDGREEN << "Publishing the reference twist to be actuated: " << RESET << std::endl;
     twist_ref_pub->publish(twist_ref_msg);
 
     // Get Jacobian
@@ -105,9 +105,10 @@ private:
 
     if (planner_moveit_->start_state->getJacobian(planner_moveit_->joint_model_group, planner_moveit_->start_state->getLinkModel(planner_moveit_->joint_model_group->getLinkModelNames().back()), this->reference_point_position, this->jacobian))
     {
-      std::cout << BOLDGREEN << "Jacobian: \n"
-                << RESET << std::endl;
-      RCLCPP_INFO_STREAM(this->get_logger(), jacobian);
+      // std::cout << BOLDGREEN << "Jacobian: \n"
+      //           << RESET << std::endl;
+      // print jacobian
+      // RCLCPP_INFO_STREAM(this->get_logger(), jacobian);
 
       try
       {
@@ -171,7 +172,7 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joints_ref_pub;
   rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr trajectory_joints_pub;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_pub;
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_ref_sub;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_sub;
   rclcpp::TimerBase::SharedPtr timer_;
 
   // MoveIt variables (used to calculate Jacobian)
