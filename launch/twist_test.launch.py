@@ -7,12 +7,12 @@ def generate_launch_description():
 
     slider0_tf = Node(package = "tf2_ros", 
                        executable = "static_transform_publisher",
-                       arguments = ["0", "-0.5", "0", "0", "0", "0", "base_link", "slider0"],
+                       arguments = ["-0.0511367", "-0.381597", "0.156755", "0", "0", "0", "base_link", "slider0"],
                        output = "screen")
-    
+
     slider_tf = Node(package = "tf2_ros", 
                     executable = "static_transform_publisher",
-                    arguments = ["0", "0", "0", "0.52", "0", "0", "slider0", "slider"],
+                    arguments = ["0", "0", "0", "-0.52", "0", "0", "slider0", "slider"],
                     output = "screen")
     
     twist_node = Node(package = "uclv_yaskawa_simulation", 
