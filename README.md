@@ -35,6 +35,15 @@ Follow the steps below to set up the package. The suggested ROS2 version is ros-
     ```
     $ cd ~/my_ros2_ws
     $ colcon build --symlink-install
+
+    ```
+
+5. **How to launch twist controller**
+    ```
+    $ ros2 launch uclv_moveit_planner_ros2 visualize.launch simulation:=true
+    $ ros2 launch uclv_moveit_planner_ros2 planner_srv.launch simulation:=true
+    $ ros2 run uclv_yaskawa_simulation twist_ref_pub
+    
     ```
 
 
