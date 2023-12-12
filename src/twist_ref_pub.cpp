@@ -69,11 +69,7 @@ public:
                   twist_ref_pub = this->create_publisher<geometry_msgs::msg::TwistStamped>("/twist_ref", 1);
 
                   // Initialize subscriber to read the twist command from the controller
-<<<<<<< HEAD
-                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
-=======
                   twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>(twist_ref_topic_, 1, std::bind(&TwistCmd::update_vel, this, _1));
->>>>>>> 14fa28f5b0662a0ff8006b37cbcfd76033c1e09c
                   
                   // Initialize timer to publish the reference joint states and the reference twist to be actuated
                   timer_ = this->create_wall_timer(
