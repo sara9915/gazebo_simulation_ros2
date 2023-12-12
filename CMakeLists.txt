@@ -41,6 +41,12 @@ ament_target_dependencies(twist_ref_pub rclcpp sensor_msgs geometry_msgs uclv_mo
 add_executable(angle_control_node src/angle_control_node.cpp)
 ament_target_dependencies(angle_control_node rclcpp geometry_msgs std_msgs uclv_utilities tf2_ros tf2) 
 
+<<<<<<< HEAD
+=======
+add_executable(force_control_node src/force_control_node.cpp)
+ament_target_dependencies(force_control_node rclcpp geometry_msgs std_msgs uclv_utilities tf2_ros tf2) 
+
+>>>>>>> 14fa28f5b0662a0ff8006b37cbcfd76033c1e09c
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -62,6 +68,10 @@ install(TARGETS
   yaskawa_wsg_pub
   twist_ref_pub
   angle_control_node
+<<<<<<< HEAD
+=======
+  force_control_node
+>>>>>>> 14fa28f5b0662a0ff8006b37cbcfd76033c1e09c
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

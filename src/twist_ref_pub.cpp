@@ -27,8 +27,24 @@ public:
     this->q << 0, 0, 0, 0, 0, 0, 0;
     this->reference_point_position << 0.0, 0.0, 0.0;
 
+    twist_ref_topic_ = this->declare_parameter<std::string>("twist_ref_topic_", "twist_controller");
+
+    auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(this, "execute_traj_action_server");
+    while (!parameters_client->wait_for_service(std::chrono::seconds(1)))
+    {
+      if (!rclcpp::ok())
+      {
+        RCLCPP_ERROR(this->get_logger(), "Interrupted while waiting for the service. Exiting.");
+        rclcpp::shutdown();
+      }
+      RCLCPP_INFO(this->get_logger(), "service not available, waiting again...");
+    }
+    this->simulation = parameters_client->get_parameters({"simulation"}).at(0).as_bool();
+    std::cout << BOLDWHITE << "Simulation: " << RESET << this->simulation << std::endl;
+
     std::thread([this]()
                 {
+                  this->get_clock()->sleep_for(std::chrono::seconds(2));
                   std::cout << BOLDBLUE << "Creating MoveIt object..." << RESET << std::endl;
                   planner_moveit_ = std::make_shared<uclv::PlannerMoveIt>(this->shared_from_this(), "yaskawa_arm");
                   
@@ -38,16 +54,30 @@ public:
                   std::cout << BOLDBLUE << "Get current joints value q: " << RESET << this->q << std::endl;
 
                   // Initialize publishers to publish the reference joint states and the reference twist to be actuated
-                  joints_ref_pub = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 1); ///motoman/joint_ll_control
+                  if(this->simulation)
+                  {
+                    trajectory_joints_pub = this->create_publisher<trajectory_msgs::msg::JointTrajectory>("/yaskawa_arm_controller/joint_trajectory", 1);
+                    std::cout << BOLDGREEN << "Creating the publisher for simulation... " << RESET << std::endl;
+                  }
+                  else
+                  {
+                    joints_ref_pub = this->create_publisher<sensor_msgs::msg::JointState>("/motoman/joint_ll_control", 1); 
+                    std::cout << BOLDGREEN << "Creating the publisher for robot... " << RESET << std::endl;
+
+                  }
+
                   twist_ref_pub = this->create_publisher<geometry_msgs::msg::TwistStamped>("/twist_ref", 1);
 
                   // Initialize subscriber to read the twist command from the controller
+<<<<<<< HEAD
                   twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
+=======
+                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>(twist_ref_topic_, 1, std::bind(&TwistCmd::update_vel, this, _1));
+>>>>>>> 14fa28f5b0662a0ff8006b37cbcfd76033c1e09c
                   
                   // Initialize timer to publish the reference joint states and the reference twist to be actuated
                   timer_ = this->create_wall_timer(
-                      std::chrono::duration<double>(euler_sample_time), std::bind(&TwistCmd::timer_callback, this));
-                })
+                      std::chrono::duration<double>(euler_sample_time), std::bind(&TwistCmd::timer_callback, this)); })
         .detach();
   }
 
@@ -61,7 +91,6 @@ private:
   void timer_callback()
   {
     geometry_msgs::msg::TwistStamped twist_ref_msg;
-    sensor_msgs::msg::JointState joints_ref_msg;
 
     twist_ref_msg.header.stamp = this->now();
     twist_ref_msg.header.frame_id = "world";
@@ -73,7 +102,7 @@ private:
     twist_ref_msg.twist.angular.z = this->vipi(5);
 
     // Publishing the reference twist to be actuated
-    std::cout << BOLDGREEN << "Publishing the reference twist to be actuated: " << RESET << std::endl;
+    // std::cout << BOLDGREEN << "Publishing the reference twist to be actuated: " << RESET << std::endl;
     twist_ref_pub->publish(twist_ref_msg);
 
     // Get Jacobian
@@ -82,8 +111,10 @@ private:
 
     if (planner_moveit_->start_state->getJacobian(planner_moveit_->joint_model_group, planner_moveit_->start_state->getLinkModel(planner_moveit_->joint_model_group->getLinkModelNames().back()), this->reference_point_position, this->jacobian))
     {
-      std::cout << BOLDGREEN << "Jacobian: \n" << RESET << std::endl;
-      RCLCPP_INFO_STREAM(this->get_logger(), jacobian);
+      // std::cout << BOLDGREEN << "Jacobian: \n"
+      //           << RESET << std::endl;
+      // print jacobian
+      // RCLCPP_INFO_STREAM(this->get_logger(), jacobian);
 
       try
       {
@@ -94,18 +125,42 @@ private:
 
         // SEND COMMAND
         const std::vector<std::string> &joint_names = planner_moveit_->joint_model_group->getVariableNames();
-        joints_ref_msg.header.stamp = this->now();
-        for (int i = 0; i < int(q.size()); ++i)
-        {
-          joints_ref_msg.name.push_back(joint_names.at(i));
-          joints_ref_msg.position.push_back(q[i]);
-          joints_ref_msg.velocity.push_back(q_dot[i]);
-          RCLCPP_INFO_STREAM(this->get_logger(), q[i]);
-        }
 
-        // Publishing the reference joint states to be actuated
-        std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
-        joints_ref_pub->publish(joints_ref_msg);
+        if (this->simulation)
+        {
+          // std::cout << BOLDGREEN << "Creating joint trajectory msg to simulate.." << RESET << std::endl;
+          trajectory_msgs::msg::JointTrajectory trajectory_joints_msg;
+          trajectory_joints_msg.points.resize(1);
+          trajectory_joints_msg.header.stamp = this->now() + std::chrono::duration<double>(0.01);
+          for (int i = 0; i < int(q.size()); ++i)
+          {
+            trajectory_joints_msg.joint_names.push_back(joint_names.at(i));
+            trajectory_joints_msg.points.at(0).positions.push_back(q[i]);
+            trajectory_joints_msg.points[0].velocities.push_back(q_dot[i]);
+            RCLCPP_INFO_STREAM(this->get_logger(), q[i]);
+          }
+          std::cout << "\n" << std::endl;
+
+          // Publishing the reference joint states to be actuated
+          // std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
+          trajectory_joints_pub->publish(trajectory_joints_msg);
+        }
+        else
+        {
+          sensor_msgs::msg::JointState joints_ref_msg;
+          joints_ref_msg.header.stamp = this->now();
+          for (int i = 0; i < int(q.size()); ++i)
+          {
+            joints_ref_msg.name.push_back(joint_names.at(i));
+            joints_ref_msg.position.push_back(q[i]);
+            joints_ref_msg.velocity.push_back(q_dot[i]);
+            RCLCPP_INFO_STREAM(this->get_logger(), q[i]);
+          }
+
+          // Publishing the reference joint states to be actuated
+          // std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
+          joints_ref_pub->publish(joints_ref_msg);
+        }
       }
       catch (...)
       {
@@ -122,9 +177,11 @@ private:
 
   // Publisher and subscriber
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joints_ref_pub;
+  rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr trajectory_joints_pub;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_pub;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_sub;
   rclcpp::TimerBase::SharedPtr timer_;
+  std::string twist_ref_topic_;
 
   // MoveIt variables (used to calculate Jacobian)
   std::shared_ptr<uclv::PlannerMoveIt> planner_moveit_;
@@ -138,6 +195,7 @@ private:
 
   double euler_frequency = 40; // [Hz]
   double euler_sample_time = 1 / euler_frequency;
+  double simulation;
 };
 
 int main(int argc, char *argv[])
