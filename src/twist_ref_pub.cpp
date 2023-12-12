@@ -27,6 +27,8 @@ public:
     this->q << 0, 0, 0, 0, 0, 0, 0;
     this->reference_point_position << 0.0, 0.0, 0.0;
 
+    twist_ref_topic_ = this->declare_parameter<std::string>("twist_ref_topic_", "twist_controller");
+
     auto parameters_client = std::make_shared<rclcpp::SyncParametersClient>(this, "execute_traj_action_server");
     while (!parameters_client->wait_for_service(std::chrono::seconds(1)))
     {
@@ -67,7 +69,7 @@ public:
                   twist_ref_pub = this->create_publisher<geometry_msgs::msg::TwistStamped>("/twist_ref", 1);
 
                   // Initialize subscriber to read the twist command from the controller
-                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>("/twist_controller", 1, std::bind(&TwistCmd::update_vel, this, _1));
+                  twist_ref_sub = this->create_subscription<geometry_msgs::msg::TwistStamped>(twist_ref_topic_, 1, std::bind(&TwistCmd::update_vel, this, _1));
                   
                   // Initialize timer to publish the reference joint states and the reference twist to be actuated
                   timer_ = this->create_wall_timer(
@@ -122,7 +124,7 @@ private:
 
         if (this->simulation)
         {
-          std::cout << BOLDGREEN << "Creating joint trajectory msg to simulate.." << RESET << std::endl;
+          // std::cout << BOLDGREEN << "Creating joint trajectory msg to simulate.." << RESET << std::endl;
           trajectory_msgs::msg::JointTrajectory trajectory_joints_msg;
           trajectory_joints_msg.points.resize(1);
           trajectory_joints_msg.header.stamp = this->now() + std::chrono::duration<double>(0.01);
@@ -133,9 +135,10 @@ private:
             trajectory_joints_msg.points[0].velocities.push_back(q_dot[i]);
             RCLCPP_INFO_STREAM(this->get_logger(), q[i]);
           }
+          std::cout << "\n" << std::endl;
 
           // Publishing the reference joint states to be actuated
-          std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
+          // std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
           trajectory_joints_pub->publish(trajectory_joints_msg);
         }
         else
@@ -151,7 +154,7 @@ private:
           }
 
           // Publishing the reference joint states to be actuated
-          std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
+          // std::cout << BOLDGREEN << "Publishing the reference joint states to be actuated: " << RESET << std::endl;
           joints_ref_pub->publish(joints_ref_msg);
         }
       }
@@ -174,6 +177,7 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_pub;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr twist_ref_sub;
   rclcpp::TimerBase::SharedPtr timer_;
+  std::string twist_ref_topic_;
 
   // MoveIt variables (used to calculate Jacobian)
   std::shared_ptr<uclv::PlannerMoveIt> planner_moveit_;

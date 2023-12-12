@@ -21,7 +21,7 @@ public:
         : Node("angle_control_node")
     {
         measure_topic_name_ = this->declare_parameter<std::string>("measure_topic_name_", "angle_measure");
-        control_topic_name_ = this->declare_parameter<std::string>("control_topic_name_", "twist_controller");
+        control_topic_name_ = this->declare_parameter<std::string>("control_topic_name_", "angle_control_twist");
         robot_base_frame_ = this->declare_parameter<std::string>("robot_base_frame_", "base_link");
         robot_ee_frame_ = this->declare_parameter<std::string>("robot_ee_frame_", "tool0");
         robot_pusher_frame_ = this->declare_parameter<std::string>("robot_pusher_frame_", "push_extension");
@@ -44,7 +44,7 @@ public:
 private:
     void loop_cb(const std_msgs::msg::Float64 &angle) 
     {
-        RCLCPP_INFO(this->get_logger(), "Received Measure: '%f'", angle.data);
+        // RCLCPP_INFO(this->get_logger(), "Received Measure: '%f'", angle.data);
 
         theta_dot = -control_gain_ * angle.data;
 
@@ -77,8 +77,8 @@ private:
         W_pold_P = W_T_P.translation();
 
         // print W_pdot_P
-        std::cout << BOLDRED << "W_p_P: \n" << RESET << W_T_P.translation() << std::endl;
-        std::cout << BOLDRED << "W_pdot_P (dt = " << BOLDWHITE << dt << BOLDRED "): \n" << RESET << W_pdot_P <<  std::endl;
+        // std::cout << BOLDRED << "W_p_P: \n" << RESET << W_T_P.translation() << std::endl;
+        // std::cout << BOLDRED << "W_pdot_P (dt = " << BOLDWHITE << dt << BOLDRED "): \n" << RESET << W_pdot_P <<  std::endl;
 
         
         // save actual time
